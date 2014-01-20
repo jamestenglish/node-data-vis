@@ -55,7 +55,7 @@ function requestJSON(url) {
     return deferred.promise;
 }
 
-var drawCanvasChart = function(labels, dataset, isLineGraph) {
+var drawCanvasChart = function(labels, dataset) {
     var canvas = AnsiCanvas();
     var ctx = canvas.getContext('2d');
     var data = {
@@ -74,11 +74,9 @@ var drawCanvasChart = function(labels, dataset, isLineGraph) {
         scaleFontSize : 12
     };
 
-    if(isLineGraph) {
-        Chart(ctx).Line(data, options);
-    } else {
-        Chart(ctx).Bar(data, options);
-    }
+
+    Chart(ctx).Line(data, options);
+
     //flush canvas to terminal
     canvas.render();
 };
@@ -95,11 +93,12 @@ var onSuccess = function(responseText) {
 
     var dataset = responseJson.data
         .map(function(item) {
-            return ""+Math.round(item[1] * 100) / 100;
+            return item[1];
         });
 
-    drawCanvasChart(labels, dataset, true);
-    drawCanvasChart(labels, dataset, false);
+    drawCanvasChart(labels, dataset);
+    console.log(labels);
+    console.log(dataset)
     console.log("Data displayed for: " + responseJson.label);
     console.log("Between: " +
         Format.asString("dd/MM/yy", new Date(responseJson.start)) +
